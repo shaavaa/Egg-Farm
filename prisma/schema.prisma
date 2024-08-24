@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root@localhost:3306/egg"
+}
+
+model admin {
+  id        Int      @id @default(autoincrement())
+  name      String   @default("")
+  username  String   @default("")
+  password  String   @default("")
+  createdAt DateTime @default(now())
+  updateAt  DateTime @default(now())
+}
+
+model eggs {
+  id           Int            @id @default(autoincrement())
+  name         String         @default("")
+  price        Float          @default(0) @db.Double
+  stock        Int            @default(0)
+  image        String         @default("")
+  createdAt    DateTime       @default(now())
+  updateAt     DateTime       @default(now())
+  sale_details sale_details[]
+}
+
+model packs {
+  id           Int            @id @default(autoincrement())
+  name         String         @default("")
+  capacity     Float          @default(0) @db.Double
+  price        Float
+  createdAt    DateTime       @default(now())
+  updateAt     DateTime       @default(now())
+  sale_details sale_details[]
+}
+
+model sales {
+  id               Int            @id @default(autoincrement())
+  sale_date        String         @default("")
+  customer_name    String         @default("")
+  customer_address String         @default("")
+  customer_phone   String         @default("")
+  createdAt        DateTime       @default(now())
+  updateAt         DateTime       @default(now())
+  sale_details     sale_details[]
+}
+
+model sale_details {
+  id          Int      @id @default(autoincrement())
+  sale_id     Int      @default(0)
+  egg_id      Int      @default(0)
+  egg_price   Float    @default(0) @db.Double
+  egg_qty     Float    @default(0) @db.Double
+  pack_id     Int      @default(0)
+  pack_price  Float    @default(0) @db.Double
+  pack_qty    Float    @default(0) @db.Double
+  createdAt   DateTime @default(now())
+  updateAt    DateTime @default(now())
+  egg_detail  eggs     @relation(fields: [egg_id], references: [id])
+  pack_detail packs    @relation(fields: [pack_id], references: [id])
+  sale        sales    @relation(fields: [sale_id], references: [id])
+}
